@@ -348,15 +348,115 @@ public class MyStudent {
 
 总结：在配置文件加载的时候。其中管理的对象都已经初始化了！
 
+# Spring配置
 
+> 别名
 
+alias设置别名，为bean设置别名，可以设置多个别名
+```xml
+<!--    设置别名：在获取bean的时候可以使用别名获取-->
+    <alias name="student1" alias="studentdemo"/>
+```
 
+> Bean的配置
 
+```xml
+<!--    bean接收Java对象，由于Spring创建和管理-->
+<!--
+        id 是bean的识别符，要唯一，如果没有配置id，name接收默认标识符
+        如果配置id，又配置了name，那么name是别名
+        name可以设置多个别名，可以用逗号，分号，空格隔开
+        如果不配置id和name，可以根据applicationContext.getBean(.class)获取对象；
 
+        class是bean的全限定名=包名+类名
+-->
+    <bean id="user" name="user2,user3,user4" class="com.xcc.demo.User">
+        <property name="name" value="Java"/>
+    </bean>
+```
 
+> import
+这import，一般用于团队开发使用，他可以将多个配置文件，导入合并为一个
 
+applicationContext.xml
+```xml
+<imoirt resource="student.xml"/>
+<imoirt resource="UserBean.xml"/>
+<imoirt resource="Beans.xml"/>
+```
+使用的时候，直接使用总的配置就可以了。
 
+# DI依赖注入
 
+### 构造器注入
+之前的IOC写过有参无参
+
+### set注入
+依赖注入：set注入
+
+依赖：bean对象的创建依赖于容器
+
+注入：bean对象种的所有属性，由容器来注入
+
+```xml
+ <bean id="school" class="com.School">
+        <property name="schoolName" value="家里蹲大学"/>
+    </bean>
+
+    <bean id="person" class="com.Person">
+        <!--    常量注入-->
+        <property name="name" value="小明"/>
+        <!--    Bean注入-->
+        <property name="school" ref="school"/>
+        <!--    数组注入-->
+        <property name="books">
+            <array>
+                <value>西游记百会文</value>
+                <value>悟空传</value>
+                <value>西游记后传</value>
+                <value>西游记</value>
+            </array>
+        </property>
+        <!--    List注入-->
+        <property name="hobbys">
+            <list>
+                <value>看电影</value>
+                <value>玩游戏</value>
+                <value>写代码</value>
+            </list>
+        </property>
+        <!--    Map注入-->
+        <property name="card">
+            <map>
+                <entry key="aaa" value="111"/>
+                <entry key="bbb" value="222"/>
+                <entry key="ccc" value="333"/>
+            </map>
+        </property>
+        <!--    set注入-->
+        <property name="games">
+            <set>
+                <value>艾尔登法环</value>
+                <value>最终幻想16</value>
+                <value>原神</value>
+                <value>LOL</value>
+            </set>
+        </property>
+        <!--    NULL注入-->
+        <property name="wife">
+            <null/>
+        </property>
+        <!--    Properties注入-->
+        <property name="info">
+            <props>
+                <prop key="学号">2023</prop>
+                <prop key="性别">男</prop>
+                <prop key="姓名">小明</prop>
+            </props>
+        </property>
+    </bean>
+```
+### 其他注入
 
 
 

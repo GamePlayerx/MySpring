@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
+
+
+    <bean id="school" class="com.School">
+        <property name="schoolName" value="家里蹲大学"/>
+    </bean>
+
+    <bean id="person" class="com.Person">
+        <!--    常量注入-->
+        <property name="name" value="小明"/>
+        <!--    Bean注入-->
+        <property name="school" ref="school"/>
+        <!--    数组注入-->
+        <property name="books">
+            <array>
+                <value>西游记百会文</value>
+                <value>悟空传</value>
+                <value>西游记后传</value>
+                <value>西游记</value>
+            </array>
+        </property>
+        <!--    List注入-->
+        <property name="hobbys">
+            <list>
+                <value>看电影</value>
+                <value>玩游戏</value>
+                <value>写代码</value>
+            </list>
+        </property>
+        <!--    Map注入-->
+        <property name="card">
+            <map>
+                <entry key="aaa" value="111"/>
+                <entry key="bbb" value="222"/>
+                <entry key="ccc" value="333"/>
+            </map>
+        </property>
+        <!--    set注入-->
+        <property name="games">
+            <set>
+                <value>艾尔登法环</value>
+                <value>最终幻想16</value>
+                <value>原神</value>
+                <value>LOL</value>
+            </set>
+        </property>
+        <!--    NULL注入-->
+        <property name="wife">
+            <null/>
+        </property>
+        <!--    Properties注入-->
+        <property name="info">
+            <props>
+                <prop key="学号">2023</prop>
+                <prop key="性别">男</prop>
+                <prop key="姓名">小明</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>
