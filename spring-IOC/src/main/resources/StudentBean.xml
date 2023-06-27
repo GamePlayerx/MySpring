@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
+
+<!--    第一种根据index参数下标设置-->
+    <bean id="student1" class="com.Student">
+        <constructor-arg index="0" value="Java1"/>
+    </bean>
+
+<!--    第二种根据参数名字设置-->
+    <bean id="student2" class="com.Student">
+<!--        name指参数名-->
+        <constructor-arg name="name" value="Java2"/>
+    </bean>
+
+<!--    第三种根据参数类型设置-->
+    <bean id="student3" class="com.Student">
+        <constructor-arg type="java.lang.String" value="Java3"/>
+    </bean>
+
+</beans>

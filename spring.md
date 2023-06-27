@@ -230,17 +230,123 @@ ConfigurableApplicationContext --> ApplicationContext
 现在，我们彻底不用再程序中改动了，要实现不同的操作，只需要在xml配置文件中进行修改，
 所谓IOC,一句话搞定：对象由Spring来创建，管理，装配！
 
+# IOC创建对象的方式
+> 无参构造方法来创建
 
+User实体类
+```java
+public class User {
+    private String name;
 
+    public User() {
+        System.out.println("user无参构造方法！");
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void show() {
+        System.out.println("name=="+name);
+    }
+}
+```
 
+UserBeanXML文件
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="user" class="com.User">
+        <property name="name" value="Java"/>
+    </bean>
 
+</beans>
+```
 
+测试类MyDemo
+```java
+public class MyDemo {
 
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("UserBean.xml");
+        User user = (User) context.getBean("user");
+        user.show();
+    }
+}
+```
 
+结果可以发现，在调用show方法之前，User之前已经通过无参构造初始化了！
+```java
+user无参构造方法！
+name==Java
+```
 
+> 有参构造方法创建
+
+实体类Student
+```java
+public class Student {
+    public String name;
+
+    public Student(String name) {
+        this.name = name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void show() {
+        System.out.println("name===="+name);
+    }
+}
+```
+
+xml的三种写法
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
+
+<!--    第一种根据index参数下标设置-->
+    <bean id="student1" class="com.Student">
+        <constructor-arg index="0" value="Java1"/>
+    </bean>
+
+<!--    第二种根据参数名字设置-->
+    <bean id="student2" class="com.Student">
+<!--        name指参数名-->
+        <constructor-arg name="name" value="Java2"/>
+    </bean>
+
+<!--    第三种根据参数类型设置-->
+    <bean id="student3" class="com.Student">
+        <constructor-arg type="java.lang.String" value="Java3"/>
+    </bean>
+
+</beans>
+```
+
+测试MyStudent类
+```java
+public class MyStudent {
+
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("StudentBean.xml");
+
+        Student student = (Student) context.getBean("student1");
+        student.show();
+    }
+}
+```
+
+总结：在配置文件加载的时候。其中管理的对象都已经初始化了！
 
 
 
