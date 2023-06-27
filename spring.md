@@ -477,4 +477,28 @@ applicationContext.xml
 ```
 不过需要注意用c命名空间的时候，对象需要有参构造函数，p命名空间，需要无参构造函数
 
+# bean作用域
 
+|   Scope    | Description |
+|-------|-------------|
+|   singleton    |      (Default) Scopes a single bean definition to a single object instance for each Spring IoC container.       |
+|   prototype    |    Scopes a single bean definition to any number of object instances.         |
+|   request    |      Scopes a single bean definition to the lifecycle of a single HTTP request. That is, each HTTP request has its own instance of a bean created off the back of a single bean definition. Only valid in the context of a web-aware Spring ApplicationContext.       |
+|   session    |      Scopes a single bean definition to the lifecycle of an HTTP Session. Only valid in the context of a web-aware Spring ApplicationContext.       |
+|   application    |    Scopes a single bean definition to the lifecycle of a ServletContext. Only valid in the context of a web-aware Spring ApplicationContext.         |
+|   websocket    |    Scopes a single bean definition to the lifecycle of a WebSocket. Only valid in the context of a web-aware Spring ApplicationContext.         |
+
+
+### 1.单例模式（Spring默认机制）
+只会创建一次
+```xml
+<bean id="demo1" class="com.UserDemo" c:name="小黑" c:age="18" scope="singleton"/>
+```
+
+### 2.原型模式
+每次容器中get的时候，都会产生一个新对象！
+```xml
+<bean id="demo1" class="com.UserDemo" c:name="小黑" c:age="18" scope="prototype"/>
+```
+
+### 3.其余的request,session,application,websocket这些只能在web开发中使用到。
