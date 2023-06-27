@@ -457,7 +457,24 @@ applicationContext.xml
     </bean>
 ```
 ### 其他注入
+> p命名和c命名注入
 
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
+<!--    导入约束：xmlns:p="http://www.springframework.org/schema/p"-->
+<!--    p命名空间。属性依然要设置set方法-->
+    <bean id="demo" class="com.UserDemo" p:name="小白" p:age="26"/>
 
+<!--    导入约束： xmlns:c="http://www.springframework.org/schema/c"-->
+    <bean id="demo1" class="com.UserDemo" c:name="小黑" c:age="18"/>
+</beans>
+```
+不过需要注意用c命名空间的时候，对象需要有参构造函数，p命名空间，需要无参构造函数
 
 
