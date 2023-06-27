@@ -502,3 +502,54 @@ applicationContext.xml
 ```
 
 ### 3.其余的request,session,application,websocket这些只能在web开发中使用到。
+
+# bean的自动装配
+
+自动装配是Spring满足bean依赖一种方式！  
+Spring会在上下文中自动寻找，并自动给bean装配属性！
+
+> 在Spring中有三种装配方式   
+> 1.在xml中显示的配置   
+> 2.在Java中显示配置   
+> 3.隐式的自动装配bean
+
+> byName 按名称自动装配
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dog" class="com.dog"/>
+    <bean id="cat" class="com.cat"/>
+
+    <bean id="people" class="com.People" autowire="byName">
+        <property name="name" value="小黑"/>
+    </bean>
+
+</beans>
+```
+> byName：将查找其类中所有的set方法名，例如setCat，获得将set去掉并且字母小写的字符串，即cat
+> 去Spring容器中寻找是否有此字符串名称id的对象
+> 如果有，就取出注入；如果没有，就会报空指针异常。
+
+> byType 按类型自动装配
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dog" class="com.dog"/>
+    <bean id="cat" class="com.cat"/>
+
+    <bean id="people" class="com.People" autowire="byType">
+        <property name="name" value="小黑"/>
+    </bean>
+
+</beans>
+```
+> byTpe: 会自动在容器上下文中查找，和自己对象属性类型相同的bean！
+> 使用的前提是必须保证：同一类型的对象，在Spring容器中唯一。如果不唯一，会报不唯一的异常。
