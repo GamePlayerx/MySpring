@@ -667,7 +667,7 @@ private Dog dog;
 2、 属性如何注入
 ```java
 import org.springframework.beans.factory.annotation.Value;
-
+// 这里这个注解的意思，就是名声这个类被Spring接管了，注册到容器中
 // 等价与<bean id="user" class="com.User"/>
 // @Component 组件
 @Component
@@ -746,9 +746,44 @@ XML管理Bean
     <context:annotation-config/>
 ```
 
+# 使用Java的方式配置Spring
+使用JavaConfig来装配
 
+```java
+// 这个也会被Spring托管，注册到容器中，因为它本来就是一个@Component
+// @Configuration代表这是一个配置类，就和我们之前看的beans.xml
+// @ComponentScan("xxxx") 意思是扫描下面路径的包
+@Configuration
+@ComponentScan("com")
+public class AppConfig {
+    // 注册一个bean，就相当于我们之前写的一个bean标签
+    // 这个方法的名字，就相当于bean标签中的id属性
+    // 这个方法的返回值，就相当于bean标签中的class属性
+    @Bean
+    public MyService myService() {
+        // 就是返回哟啊注入到bean的对象！
+        return new MyServiceImpl();
+    }
+}
+```
+等于
+```xml
+<beans>
+    <bean id="myService" class="com.service.MyServiceImpl"/>
+</beans>
+```
+Import
 
-
+```java
+@Configuration
+@Import(AppConfig.class)
+public class MyConfig {
+    @Bean
+    public Dog dog() {
+        return new Dog();
+    }
+}
+```
 
 
 
