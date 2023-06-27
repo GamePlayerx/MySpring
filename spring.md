@@ -118,3 +118,140 @@ Bean的定义信息直接以注解的形式定义在实现类中，从而达到�
 
 控制反转是一种通过描述（XML或注解）并通过第三方生产或获取特定对象的方式。在Spring中实现
 控制反转的是IOC容器，其实现方式是依赖注入（Dependency Injection,DI）
+
+## HelloSpring
+
+做个简单的例子体验一下
+
+创建实体类Hello
+```java
+public class Hello {
+    private String name;
+
+    public String getNaem() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Hello{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+}
+```
+
+这里用的是XML文件方式
+```java
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd">
+
+<!--    bean就是Java对象，由Spring创建和管理
+
+        类型  变量名  =  new  类型()
+        Hello hello = new Hello();
+
+        id  =  变量
+        class  =  new的对象
+        property  相当于给对象中的属性设置一个值！
+-->
+    <bean id="hello" class="com.Hello">
+        <property name="name" value="Spring"/>
+    </bean>
+
+</beans>
+```
+
+在创建一个测试类
+```java
+public class MyTest {
+
+    public static void main(String[] args) {
+        // 获取Spring的上下文对象！
+        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        // 我们的对象现在都正在Soring中的管理了，我们要使用，直接去里面取出来就可以！
+        Hello hello = (Hello) context.getBean("hello");
+        System.out.println(hello.toString());
+    }
+}
+```
+
+测试一下，最后的输出结果
+```java
+Hello{name='Spring'}
+```
+
+这个过程中Hello是Spring创建的，Hello对象的属性是Spring容器设置的
+
+这个例子的过程就是控制反转：
+
+控制：谁来控制对象的创建，创痛应用程序的对象是由程序本身控制创建的，使用Spring后，
+对象是由Spring来创建的
+
+反转：程序本身不创建对象，而变成被动的接收对象
+
+依赖注入：就是利用set方法进行注入的。
+```java
+ public void setName(String name) {
+        this.name = name;
+ }
+```
+
+IOC是一种编程思想，由主动的编程编程被懂的接收
+
+在MyTest测试类中
+```java
+ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+```
+浅浅看一下ClassPathXmlApplicationContext的底层代码的：
+
+```mermaid
+graph BT
+ClassPathXmlApplicationContext -->  AbstractXmlApplicationContext
+
+AbstractXmlApplicationContext -->AbstractRefreshableConfigApplicationContext
+
+AbstractRefreshableConfigApplicationContext --> AbstractRefreshableApplicationContext
+
+AbstractRefreshableApplicationContext --> AbstractApplicationContext
+
+AbstractApplicationContext --> ConfigurableApplicationContext
+
+ConfigurableApplicationContext --> ApplicationContext
+
+```
+现在，我们彻底不用再程序中改动了，要实现不同的操作，只需要在xml配置文件中进行修改，
+所谓IOC,一句话搞定：对象由Spring来创建，管理，装配！
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
