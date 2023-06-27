@@ -609,7 +609,7 @@ private Dog dog;
 > 其次再进行默认的byName方式进行装配；
 > 如果以上都不成功，则按byType的方式自动装配。
 > 都不成功，则报异常
-方式一
+> 方式一
 ```xml
 <bean id="dog" class="com.dog"/>
 <bean id="cat2" class="com.Cat"/>
@@ -644,12 +644,107 @@ private Dog dog;
 > 但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。
 > 它们的作用都是用注解方式注解对象，但执行顺序不同。@Autowired先byType，@Resource先byName
 
+# 使用注解开发
 
+要使用注解开发，必须要保证aop包导入，使用注解需要导入context约束，添加注解的支持！
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/context/spring-context.xsd">
 
+<!--    指定要扫描的包，这个包下的注解就会生效-->
+    <context:component-scan base-package="com"/>
+    <context:annotation-config/>
+</beans>
+```
+1、bean
 
+2、 属性如何注入
+```java
+import org.springframework.beans.factory.annotation.Value;
 
+// 等价与<bean id="user" class="com.User"/>
+// @Component 组件
+@Component
+public class User {
+    // 相当于<property name="name" value="SpringFramework"/>
+    @Value("SpringFramework")
+    public String name;
 
+//    @Value("SpringFramework")
+    public void setName() {
+        this.name = name;
+    }
+}
+```
+3、衍生的注解    
+@Component有几个衍生注解，我们在web开发中，会按照mvc三层架构分层！    
+dao 【@Repository】     
+service 【@Service】    
+controller  【@Controller】    
+这四个注解功能都是一样的，都是代表将某个注册到Spring中，装配Bean    
+4、自动装配置
 
+```java
+/**
+ *  @Autowired: 自动装配通过类型。名字
+ *  如果Autowired不能唯一自动装配上属性，则需要通过@Qualifier(value = "xxx")
+ * @Nullable 字段标记了这注解，说明这个字段可以为null；
+ * @Resource： 自动装配通过名字，类型。
+ */
+```
+5、作用域
+> @Scope    
+> singleton: 默认的，Spring会采用单例模式创建这个对象。关闭工厂，所有的对象都会销毁。    
+> prototype：多例模式。关闭工厂，所有的对象不会销毁。内部的垃圾回收机制会回收
+
+```java
+// 单例模式
+@Component
+@Scope("singleton")
+public class User {
+    // 相当于<property name="name" value="SpringFramework"/>
+    @Value("SpringFramework")
+    public String name;
+
+    public void setName() {
+        this.name = name;
+    }
+}
+```
+```java
+// 多例模式
+@Component
+@Scope("prototype")
+public class User {
+    // 相当于<property name="name" value="SpringFramework"/>
+    @Value("SpringFramework")
+    public String name;
+
+    public void setName() {
+        this.name = name;
+    }
+}
+```
+6、小结   
+XML与注解：   
+XML可以适用任何场景，结构清晰，维护方便     
+注解不是自己提供的类使用不了，维护复杂，开发简单
+
+XML与注解整合开发：       
+XML管理Bean       
+注解完成属性注入            
+我们在使用的过程中，只需要注意一个问题：必须让注解生效，就需要开启注解的支持
+```xml
+<!--    指定要扫描的包，这个包下的注解就会生效-->
+    <context:component-scan base-package="com"/>
+    <context:annotation-config/>
+```
 
 
 
