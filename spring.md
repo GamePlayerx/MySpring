@@ -376,7 +376,7 @@ alias设置别名，为bean设置别名，可以设置多个别名
 ```
 
 > import
-这import，一般用于团队开发使用，他可以将多个配置文件，导入合并为一个
+> 这import，一般用于团队开发使用，他可以将多个配置文件，导入合并为一个
 
 applicationContext.xml
 ```xml
@@ -553,3 +553,112 @@ Spring会在上下文中自动寻找，并自动给bean装配属性！
 ```
 > byTpe: 会自动在容器上下文中查找，和自己对象属性类型相同的bean！
 > 使用的前提是必须保证：同一类型的对象，在Spring容器中唯一。如果不唯一，会报不唯一的异常。
+
+# 使用注解实现自动装配
+
+1.导入约束 context约束
+
+2.配置注解的支持：context:annotation-config/
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springFramework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/context/spring-context.xsd">
+
+<!--    -->
+    <context:annotation-config/>
+</beans>
+```
+@Autowired
+
+直接在属性上使用即可！也可以在set方法上使用   
+使用Autowired我们可以不用编写Set方法了，前提是你这自动装配的属性在IOC（Spring）容器中存在，
+且符合名字byName
+
+> @Autowired(required = false) 说明：false，对象可以为null；true，对象必须存对象，不能为null.
+
+```java
+// 如果允许对象为null，设置required = false，默认为true
+@Autowired(required = false)
+private Cat cat;
+```
+
+@Qualifier
+> @Autowired 是根据类型自动装配的，加上@Qualifier则可以根据byName的方式自动装配
+> @Qualifier不能单独使用
+```xml
+<bean id="dog1" class="com.dog"/>
+<bean id="cat1" class="com.Cat"/>
+```
+
+```java
+@Autowired
+@Qualifier(value = "cat1")
+private Cat cat;
+@Autowired
+@Qualifier(value = "dog1")
+private Dog dog;
+```
+
+@Resource
+> @Resource如有指定的name属性，先按该属性进行byName方式查找装配；
+> 其次再进行默认的byName方式进行装配；
+> 如果以上都不成功，则按byType的方式自动装配。
+> 都不成功，则报异常
+方式一
+```xml
+<bean id="dog" class="com.dog"/>
+<bean id="cat2" class="com.Cat"/>
+```
+```java
+// 如果允许对象为null，设置required = false，默认为true
+@Resource(name = "cat2")
+private Cat cat;
+@Resource
+private Dog dog;
+```
+方式二
+```xml
+<bean id="dog" class="com.dog"/>
+<bean id="cat" class="com.Cat"/>
+```
+```java
+@Resource
+private Cat cat;
+@Resource
+private Dog dog;
+```
+### 小结
+> @Autowired和@Resource异同：   
+> 1、@Autowired与@Resource都可以用来装配bean。都可以写再字段上，或写再set方法上     
+> 2、@Autowired默认按类型装配（属于spring规范），默认情况下必须要求依赖对象必须存在，如果
+> 要允许null值，可以设置它的required属性为false，如：@Autowired(required=false),
+> 如果我们想使用名称装配可以结合@Qualifiter注解进行使用   
+> 3、@Resource(属于J2EE复返)，默认按照名称进行装配，名称可以通过name属性进行指定。
+> 如果没有指定name属性，当注解写在字段上时，默认取字段名进行按照名称查找，如果注解写在set方法上
+> 默认取属性名进行装配。当找不到名称匹配的bean时才按照类型进行装配。
+> 但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。
+> 它们的作用都是用注解方式注解对象，但执行顺序不同。@Autowired先byType，@Resource先byName
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
