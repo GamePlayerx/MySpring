@@ -961,13 +961,88 @@ public class test {
 ### AOP：纵向开发，横向开发
 ![img_1.png](img_1.png)
 # 动态代理模式
+* 动态代理和静态代理角色一样
+* 动态代理的代理类是动态生成的，不是我们直接写好的！
+* 动态代理分为两大类：基于接口的动态代理，基于类的动态代理
+    + 基于接口--JDK动态代理
+    + 基于类：cglib
+    + Java字节码实现：javassist
 
+### InvocationHandler  和  Proxy
+![img_3.png](img_3.png)
+![img_2.png](img_2.png)
 
+具体代码：
+```java
+public class ProxyInvocationHandler implements InvocationHandler {
+    // 被代理的接口
+    private Object traget;
 
+    public void setTraget(Object traget) {
+        this.traget = traget;
+    }
 
+    // 生成代理类
+    public Object getProxy() {
+        return Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                traget.getClass().getInterfaces(),this);
+    }
 
+    /**
+     * 处理代理实例，并返回结果
+     * proxy： 代理类
+     * method：代理类的调用处理程序的方法对象
+     * @param proxy the proxy instance that the method was invoked on
+     *
+     * @param method the {@code Method} instance corresponding to
+     * the interface method invoked on the proxy instance.  The declaring
+     * class of the {@code Method} object will be the interface that
+     * the method was declared in, which may be a superinterface of the
+     * proxy interface that the proxy class inherits the method through.
+     *
+     * @param args an array of objects containing the values of the
+     * arguments passed in the method invocation on the proxy instance,
+     * or {@code null} if interface method takes no arguments.
+     * Arguments of primitive types are wrapped in instances of the
+     * appropriate primitive wrapper class, such as
+     * {@code java.lang.Integer} or {@code java.lang.Boolean}.
+     *
+     * @return
+     * @throws Throwable
+     */
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Log(method.getName());
+        // 动态代理的本质，就是使用反射机制实现！
+        Object result = method.invoke(traget, args);
+        return result;
+    }
 
+    public void Log(String msg){
+        System.out.println("调用了"+msg+"的方法！");
+    }
 
+}
+```
+测试
+```java
+public static void main(String[] args) {
+        // 真实对象
+        UserServiceImpl userService = new UserServiceImpl();
+        // 代理对象的调用处理程序
+        ProxyInvocationHandler p = new ProxyInvocationHandler();
+        // 设置要代理的对象
+        p.setTraget(userService);
+        // 动态生成代理类
+        UserService proxy = (UserService) p.getProxy();
+        proxy.delete();
+    }
+```
 
+### 动态代理的好处：
+* 可以使真实角色的操作更加纯粹！不用去关注一些公共的业务
+* 公共也就教给代理角色！实现了业务的分工
+* 公共业务发生扩展的时候，方便集中管理！
+* 一个动态代理类代理的是一个接口，一般就是对应的一类业务
+* 一个动态代理类可以代理多个类，代理的是接口！
 
 
