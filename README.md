@@ -864,6 +864,102 @@ public class Client {
 ### 缺点：
 * 一个真实角色就会产生一个代理角色；代码量会翻倍-开发效率降低
 
+## 补充实例
+一般我们在工作中基本上都会有遇到这样的问题：      
+公司有个已经写好，在用的代码：
+```java
+public interface UserService {
+    void add();
+    void delete();
+    void update();
+    void query();
+}
+```
+```java
+public class UserServiceImpl implements UserService {
+    public void add() {
+        System.out.println("添加一条信息");
+    }
+
+    public void delete() {
+        System.out.println("删除一条信息");
+    }
+
+    public void update() {
+        System.out.println("修改一条信息");
+    }
+
+    public void query() {
+        System.out.println("查询一条信息");
+    }
+}
+```
+```java
+public class test {
+    public static void main(String[] args) {
+        UserServiceImpl userService = new UserServiceImpl();
+        userService.add();
+    }
+}
+```
+现在产品经理说要加个日志。这时候我们别随便改之前的代码，因为容易出事，但还要实现功能，所以可以用代理模式：
+
+### 分析
+* UserService: 相当于是个抽象角色，一个接口提供了增删改查4个方法
+* UserServiceImpl: 相当于是个真实角色，专门实现功能的
+我们现在要加个中介，中介不光实现了UserServiceImpl的所有功能，还多了个日志的功能
+```java
+// 代理角色，在这里添加日志的实现
+public class UserServiceProxy implements UserService{
+    private UserServiceImpl userService;
+
+    public void setUserService(UserServiceImpl userService) {
+        this.userService = userService;
+    }
+    public void add() {
+        log("add");
+        System.out.println("添加一条信息");
+    }
+
+    public void delete() {
+        log("delete");
+        System.out.println("删除一条信息");
+    }
+
+    public void update() {
+        log("update");
+        System.out.println("修改一条信息");
+    }
+
+    public void query() {
+        log("query");
+        System.out.println("查询一条信息");
+    }
+
+    public void log(String msg) {
+        System.out.println("执行了"+msg+"方法");
+    }
+}
+```
+测试类
+```java
+public class test {
+    public static void main(String[] args) {
+        // 真实业务
+        UserServiceImpl userService = new UserServiceImpl();
+        // 代理类
+        UserServiceProxy proxy = new UserServiceProxy();
+        // 使用代理类实现日志功能！
+        proxy.setUserService(userService);
+        proxy.add();
+    }
+}
+```
+> 我们在工作中也要谨记的原则：能跑的代码不要轻易改动，你可以用代理模式加个新的中介类，但别去改之前的实现类；
+> 我们在不改变原来代码的情况下，实现了对原有功能的增强，这是AOP中最核心的思想
+
+### AOP：纵向开发，横向开发
+![img_1.png](img_1.png)
 # 动态代理模式
 
 
