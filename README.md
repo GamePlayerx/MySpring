@@ -1260,3 +1260,159 @@ aop:aspectj-autoproxy: 说明
 <aop:aspectj-autoproxy />有一个proxy-target-class属性，默认为false，表示使用jdk动态代理织入增强，当配为<aop:aspectj-autoproxy  poxy-target-class="true"/>时，表示使用CGLib动态代理技术织入增强。不过即使proxy-target-class设置为false，如果目标类没有声明接口，则spring将自动使用CGLib动态代理。
 ```
 
+# 整合Mybatis
+
+### 1、导入jar包
+junit
+```xml
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+</dependency>
+```
+mybatis
+```xml
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>3.5.2</version>
+</dependency>
+```
+mysql-connector-java
+```xml
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.7.3</version>
+</dependency>
+```
+spring相关
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.1.10.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-jdbc</artifactId>
+    <version>5.1.10.RELEASE</version>
+</dependency>
+```
+aspectJAOP织入器
+```xml
+<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.9.4</version>
+</dependency>
+```
+mybatis-spring整合包
+```xml
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis-spring</artifactId>
+    <version>2.0.2</version>
+</dependency>
+```
+配置Maven静态资源过滤问题！
+```xml
+<build>
+    <resources>
+        <resource>
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
+</build>
+```
+### 2、编写配置文件
+编写实体类
+```java
+public class User {
+    private int id;  //id
+    private String name;   //姓名
+    private String pwd;   //密码
+}
+```
+实现mybatis的配置文件
+```java
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+ 
+    <typeAliases>
+        <package name="com"/>
+    </typeAliases>
+ 
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/demo?useSSL=true&amp;useUnicode=true&amp;characterEncoding=utf8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+ 
+    <mappers>
+        <package name="com.kuang.dao"/>
+    </mappers>
+</configuration>
+```
+UserDao接口编写
+```java
+public interface UserMapper {
+    public List<User> selectUser();
+}
+```
+接口对应的Mapper映射文件
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.UserMapper">
+ 
+    <select id="selectUser" resultType="User">
+      select * from user
+    </select>
+ 
+</mapper>
+```
+
+### 3、测试
+
+```java
+@Test
+public void selectUser() throws IOException {
+ 
+    String resource = "mybatis-config.xml";
+    InputStream inputStream = Resources.getResourceAsStream(resource);
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+ 
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+ 
+    List<User> userList = mapper.selectUser();
+    for (User user: userList){
+        System.out.println(user);
+    }
+ 
+    sqlSession.close();
+}
+```
+
+# 声明式事务
+
+
