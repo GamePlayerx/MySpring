@@ -784,9 +784,85 @@ public class MyConfig {
     }
 }
 ```
+# 代理模式
+SpringAOP的底层就是代理模式     
+代理模式：       
+1、静态代理        
+2、动态代理
+![img.png](img.png)
 
 # 静态代理模式
 
+### 角色分析：
+* 抽象角色：一般使用接口或者抽象类来实现
+* 真实角色：被代理的角色
+* 代理角色：代理真实角色；代理真实角色后，一般会做一些附属的操作。
+* 客户：使用代理角色来进行一些操作。
+
+### 代码步骤：
+* 1.接口
+```java
+// 抽象角色：租房
+public interface Rent {
+    public void rent();
+}
+```
+* 2.真实角色
+```java
+// 真实角色：房东，房东要出租房子
+public class Host implements Rent{
+    public void rent() {
+        System.out.println("房屋出租");
+    }
+}
+```
+* 3.代理角色
+```java
+// 代理角色：中介
+public class Proxy implements Rent{
+    private Host host;
+    public Proxy() {}
+    public Proxy(Host host) {
+        this.host = host;
+    }
+    // 租房
+    public void rent() {
+        seeHouse();
+        host.rent();
+        fare();
+    }
+    // 看房
+    public void seeHouse() {
+        System.out.println("待房客看房");
+    }
+    // 收中介费
+    public void fare() {
+        System.out.println("收中介费");
+    }
+}
+```
+* 4.客户端访问代理角色
+```java
+// 客户类，一般客户都会找代理！
+public class Client {
+    public static void main(String[] args) {
+        // 房东要租房
+        Host host = new Host();
+        // 中介帮助房东
+        Proxy proxy = new Proxy(host);
+        // 你去找中介
+        proxy.rent();
+    }
+}
+```
+
+### 代理模式的好处
+* 可以使真实角色的操作更加纯粹！不用去关注一些公共的业务
+* 公共也就交给代理角色！实现了业务的分工！
+* 公共业务发生扩展的时候，方便集中管理
+
+### 缺点：
+* 一个真实角色就会产生一个代理角色；代码量会翻倍-开发效率降低
 
 # 动态代理模式
 
